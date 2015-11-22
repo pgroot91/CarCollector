@@ -20,5 +20,5 @@ from django.contrib import admin
 #     url(r'^admin/', include(admin.site.urls)),
 # ]
 urlpatterns = patterns('',
-(r'^/?$', 'SearchEngine.views.search'),
+(r'^/?$', 'CarCollector.views.search'),
 )

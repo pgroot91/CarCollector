@@ -51,7 +51,7 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.security.SecurityMiddleware',
 )
 
-ROOT_URLCONF = 'SearchEngine.urls'
+ROOT_URLCONF = 'CarCollector.urls'
 
 TEMPLATES = [
     {
@@ -69,7 +69,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'SearchEngine.wsgi.application'
+WSGI_APPLICATION = 'CarCollector.wsgi.application'
 
 
 # Database

@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+</head>
+<body>
+    <form action="/" method="post">{% csrf_token %}
+        <input type="text" name="term" size="30">
+        <input type="submit" value="Search">
+    </form>
+    <hr>
+    {% if result %}
+        {% for res in result %}
+            <article>
+                <div></div><a href="{{ res.url }}" target="_blank">{{ res.title }}</a></div>
+                <div><img src="{{ res.image_url }}"></div>
+                <div>{{ res.description }}</div>
+                <div>&euro;&nbsp;{{ res.price }}</div>
+            </article>
+        {% endfor %}
+    {% endif %}
+</body>
+</html>

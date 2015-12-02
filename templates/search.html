@@ -1,24 +1,33 @@
+{% load staticfiles %}
 <!DOCTYPE html>
 <html>
 <head lang="en">
     <meta charset="UTF-8">
     <title></title>
+    <link rel="stylesheet" href="{% static "css/style.css" %}">
 </head>
 <body>
-    <form action="/" method="post">{% csrf_token %}
-        <input type="text" name="term" size="30">
-        <input type="submit" value="Search">
-    </form>
-    <hr>
-    {% if result %}
-        {% for res in result %}
-            <article>
-                <div></div><a href="{{ res.url }}" target="_blank">{{ res.title }}</a></div>
-                <div><img src="{{ res.image_url }}"></div>
-                <div>{{ res.description }}</div>
-                <div>&euro;&nbsp;{{ res.price }}</div>
-            </article>
-        {% endfor %}
-    {% endif %}
+    <header>
+        <form action="/" method="post">{% csrf_token %}
+            <input type="text" name="term" size="30" spellcheck="true">
+            <input type="submit" value="Search">
+        </form>
+    </header>
+    <main id="main">
+        {% if result %}
+            {% for res in result %}
+                <a href="{{ res.url }}" target="_blank" title="{{ res.title }}">
+                    <article class="car">
+                        <div class="car-image"><img src="{{ res.image_url }}" alt="{{ res.title }}" class="car-image"></div>
+                        <div class="car-details">
+                            <h3 class="title">{{ res.title }}</h3>
+                            <div>{{ res.description }}</div>
+                            <div class="price">&euro;&nbsp;{{ res.price }}</div>
+                        </div>
+                    </article>
+                </a>
+            {% endfor %}
+        {% endif %}
+    </main>
 </body>
 </html>

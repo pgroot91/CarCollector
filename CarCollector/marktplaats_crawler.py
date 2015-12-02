@@ -46,12 +46,14 @@ def parse_car_listing(listing_tag, brand_name):
 
 
 def collect_cars(brand_id, brand_name):
+    print('start marktplaats')
     brand_page = get_car_page(brand_id)
     car_tags = get_car_tags(brand_page)
     result = []
     for listing_tag in car_tags:
         car = parse_car_listing(listing_tag, brand_name)
         result.append(car)
+    print('end marktplaats')
     return result
 
 

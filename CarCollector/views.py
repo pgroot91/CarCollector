@@ -42,6 +42,9 @@ def get_cars_from_pages(autotrader_brand_id, autowereld_brand_id, brand_name, ma
     cars.extend(collect_autotrader_cars.get())
     cars.extend(collect_autowereld_cars.get())
 
+    pool.close()
+    pool.join()
+
     return cars
 
 
@@ -71,6 +74,9 @@ def get_cars(request):
         autotrader_brand_id = autotrader_brands.get()[brand_name]
     if brand_name in autowereld_brands.get():
         autowereld_brand_id = autowereld_brands.get()[brand_name]
+
+    pool.close()
+    pool.join()
 
     cars = get_cars_from_pages(autotrader_brand_id, autowereld_brand_id, brand_name, marktplaats_brand_id,
                                speurders_brand_id)

@@ -45,7 +45,7 @@ img.car-image {
 
 div.car-details {
     width: 483px;
-    height: 126px;
+    height: 106px;
     position: relative;
     float: left;
     padding-left: 0;
@@ -73,8 +73,9 @@ div.price {
     top: 0;
     bottom: 0;
     width: 134px;
-    height: 126px;
+    height: 20px;
     padding-top: 3px;
     border: 1px solid #e6e6e6;
     right: 0;
+    float: right;
 }

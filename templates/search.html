@@ -16,14 +16,15 @@
     <main id="main">
         {% if result %}
             {% for res in result %}
-                <a href="{{ res.url }}" target="_blank" title="{{ res.title }}">
-                    <article class="car">
-                        <div class="car-image"><img src="{{ res.image_url }}" alt="{{ res.title }}" class="car-image"></div>
+                <a href="{{ res.url }}" target="_blank" title="{{ res.title }}" itemscope itemtype="http://schema.org/Offer" itemref="{{ res.id }}">
+                    <article class="car" itemprop="itemOffered" itemscope itemtype="http://schema.org/Car">
+                        <div class="car-image"><img itemprop="image" src="{{ res.image_url }}" alt="{{ res.title }}" class="car-image"></div>
                         <div class="car-details">
-                            <h3 class="title">{{ res.title }}</h3>
-                            <div>{{ res.description }}</div>
-                            <div class="price">&euro;&nbsp;{{ res.price }}</div>
-                        </div>
+                            <h3 class="title" itemprop="name">{{ res.title }}</h3>
+                            <div itemprop="description">{{ res.description }}</div>
+                            <span itemscope><div class="price" itemprop="priceSpecification" itemscope id="{{ res.id }}"
+        itemtype="http://schema.org/UnitPriceSpecification"><meta itemprop="priceCurrency" content="EUR">&euro;&nbsp;<meta itemprop="price" content="{{ res.price }}">{{ res.price }}</div>
+                        </div></span>
                     </article>
                 </a>
             {% endfor %}

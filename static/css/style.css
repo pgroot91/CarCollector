@@ -2,10 +2,17 @@ html {
     font-family: Arial,Helvetica,Sans,Sans-Serif,"Sans Serif";
     font-size: 100%;
     line-height: 1.25;
+    color: #000;
 }
+
+a:link, a:visited {
+    color: #000;
+}
+
 body {
     font-size: 12px;
     color: #444;
+    margin: 0;
 }
 
 main#main {
@@ -14,15 +21,12 @@ main#main {
     border-right: 1px solid #ccc;
     width: 700px;
     float: left;
-    margin-left: 0;
 }
 
 article.car {
     height: 126px;
     border-top: 1px solid transparent;
-    padding-bottom: 14px;
     border-bottom: 1px solid #888;
-    margin-bottom: 1px;
     background-color: #fff;
 }
 
@@ -44,18 +48,21 @@ img.car-image {
 }
 
 div.car-details {
-    width: 483px;
-    height: 106px;
+    width: 503px;
+    height: 126px;
     position: relative;
     float: left;
     padding-left: 0;
     border-right: 0;
     margin-left: 0;
+    margin-bottom: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 h3.title {
     font-size: 18px;
-    height: 22px;
+    height: 20px;
     line-height: 20px;
     cursor: pointer;
     border-top: 1px solid #e6e6e6;
@@ -70,12 +77,87 @@ h3.title {
 
 div.price {
     position: absolute;
-    top: 0;
     bottom: 0;
     width: 134px;
     height: 20px;
     padding-top: 3px;
-    border: 1px solid #e6e6e6;
     right: 0;
     float: right;
+    text-align: right;
+}
+
+input.search {
+    border: 0;
+    height: 41px;
+    font-size: 21px;
+    padding: 0 0 0 7px;
+    border-radius: 2px;
+    width: 100%;
+}
+
+input.search-button {
+    min-width: 134px;
+    border-radius: 2px;
+    border: 0;
+    display: block;
+    height: 100%;
+    padding: 0;
+    font-size: 14px;
+    font-weight: bold;
+    background-color: #007fad;
+    color: #fff;
+    cursor: pointer;
+}
+
+input.filter-button {
+    min-width: 134px;
+    border-radius: 2px;
+    border: 0;
+    display: block;
+    height: 100%;
+    padding: 0;
+    font-size: 14px;
+    font-weight: bold;
+    background-color: #007fad;
+    color: #fff;
+    cursor: pointer;
+}
+
+div.search {
+    margin-top: 0;
+    height: 41px;
+    max-width: 675px;
+    display: table;
+    width: 100%;
+}
+
+div.first-search-row {
+    display: table-cell;
+    padding-left: 9px;
+    width: 100%;
+    vertical-align: middle;
+}
+
+form.search {
+    width: 614px;
+    margin: 0 auto;
+    padding: 13px 0;
+}
+
+header#header {
+    background: #37454d;
+    margin: 0 auto;
+}
+
+aside#filter {
+    border: solid 1px #cdd0d2;
+    display: block;
+    width: 250px;
+    float: left;
+}
+
+div#main-content {
+    max-width: 1200px;
+    margin-top: 30px;
+    margin: 0 auto;
 }

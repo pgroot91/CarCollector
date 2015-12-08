@@ -8,8 +8,8 @@ from CarCollector.models import Car
 __author__ = 'rian'
 
 
-def get_car_page(brand_id):
-    return 'http://www.autotrader.nl/auto/' + brand_id + '/'
+def get_car_page(brand_id, min_price, max_price):
+    return 'http://www.autotrader.nl/auto/' + brand_id + '/' + '?zoekopdracht=prijs-van-' + min_price + '-tot-' + max_price
 
 
 def get_car_tags(brand_page):
@@ -55,9 +55,9 @@ def parse_car_listing(listing_tag, brand_name):
     return car
 
 
-def collect_cars(brand_id, brand_name):
+def collect_cars(brand_id, brand_name, min_price, max_price):
     print('start autotrader')
-    brand_page = get_car_page(brand_id)
+    brand_page = get_car_page(brand_id, min_price, max_price)
     car_tags = get_car_tags(brand_page)
     result = []
     for listing_tag in car_tags:

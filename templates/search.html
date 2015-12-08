@@ -7,15 +7,53 @@
     <link rel="stylesheet" href="{% static "css/style.css" %}">
 </head>
 <body>
-    <header>
-        <form action="/" method="post">{% csrf_token %}
-            <input type="text" name="term" size="30" spellcheck="true">
-            <input type="submit" value="Search">
+    <header id="header">
+        <form action="/" method="post" class="search">{% csrf_token %}
+	    <div class="search">
+		<div class="first-search-row">
+                    <input type="text" name="term" size="30" spellcheck="true" class="search" value="{{ brand_name }}">
+		</div>
+		<div class="first-search-row">
+                    <input type="submit" value="Zoek" class="search-button">
+		</div>
+	    </div>
         </form>
     </header>
-    <main id="main">
+    <div id="main-content">
+    <aside id="filter">
+        <form action="/" method="post" class="filter">{% csrf_token %}
+	<input type="hidden" name="term" value="{{ brand_name }}" />
+	<section id ="price-range">
+	    <label for="min-price">Minimum prijs</label>
+    	    <input name="min-price" type="range" min="0" max="1000000" step="500" />
+            <label for="max-price">Maximum prijs</label>
+    	    <input name="max-price" type="range" min="0" max="1000000" step="500" />
+	</section>
+	<section id ="filter-button">
+	    <input type="submit" value="Zoek" class="filter-button">
+	</section>
+	</form>
+   </aside>
+   <main id="main">
         {% if result %}
+	    <section>
             {% for res in result %}
+                <script type="application/ld+json">
+		{
+		  "@context": "http://schema.org",
+        	  "@type" :"Offer",
+        	  "priceSpecification" : {
+            	  	"@type" : "UnitPriceSpecification",
+            	  	"priceCurrency" : "EUR",
+            	  	"price" : "{{ res.price }}" },
+        	  "itemOffered" : {
+            		"@type" : "Car",
+            		"name" : "{{ res.title }}",
+            		"description" : "{{ res.description }}",
+        		"image" : "{{ res.image_url }}",
+    		  }
+	        }
+		</script>
                 <a href="{{ res.url }}" target="_blank" title="{{ res.title }}" itemscope itemtype="http://schema.org/Offer" itemref="{{ res.id }}">
                     <article class="car" itemprop="itemOffered" itemscope itemtype="http://schema.org/Car">
                         <div class="car-image"><img itemprop="image" src="{{ res.image_url }}" alt="{{ res.title }}" class="car-image"></div>
@@ -28,7 +66,9 @@
                     </article>
                 </a>
             {% endfor %}
+	    </section>
         {% endif %}
     </main>
+    </div>
 </body>
 </html>

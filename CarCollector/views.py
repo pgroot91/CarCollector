@@ -28,14 +28,14 @@ def get_autowereld_car_brands_and_ids():
 
 
 def get_cars_from_pages(autotrader_brand_id, autowereld_brand_id, brand_name, marktplaats_brand_id,
-                        speurders_brand_id):
+                        speurders_brand_id, min_price, max_price):
     cars = []
 
     pool = Pool(processes=4)
-    collect_marktplaats_cars = pool.apply_async(marktplaats_crawler.collect_cars, (marktplaats_brand_id, brand_name))
-    collect_speurders_cars = pool.apply_async(speurders_crawler.collect_cars, (speurders_brand_id, brand_name))
-    collect_autotrader_cars = pool.apply_async(autotrader_crawler.collect_cars, (autotrader_brand_id, brand_name))
-    collect_autowereld_cars = pool.apply_async(autowereld_crawler.collect_cars, (autowereld_brand_id, brand_name))
+    collect_marktplaats_cars = pool.apply_async(marktplaats_crawler.collect_cars, (marktplaats_brand_id, brand_name, min_price, max_price))
+    collect_speurders_cars = pool.apply_async(speurders_crawler.collect_cars, (speurders_brand_id, brand_name, min_price, max_price))
+    collect_autotrader_cars = pool.apply_async(autotrader_crawler.collect_cars, (autotrader_brand_id, brand_name, min_price, max_price))
+    collect_autowereld_cars = pool.apply_async(autowereld_crawler.collect_cars, (autowereld_brand_id, brand_name, min_price, max_price))
 
     cars.extend(collect_marktplaats_cars.get())
     cars.extend(collect_speurders_cars.get())
@@ -48,7 +48,7 @@ def get_cars_from_pages(autotrader_brand_id, autowereld_brand_id, brand_name, ma
     return cars
 
 
-def get_cars(request):
+def get_cars(brand_name, min_price, max_price):
     pool = Pool(processes=4)
 
     marktplaats_brands = pool.apply_async(
@@ -60,7 +60,6 @@ def get_cars(request):
     autowereld_brands = pool.apply_async(
         get_autowereld_car_brands_and_ids)
 
-    brand_name = request.POST['term']
     marktplaats_brand_id = ''
     speurders_brand_id = ''
     autotrader_brand_id = ''
@@ -79,7 +78,7 @@ def get_cars(request):
     pool.join()
 
     cars = get_cars_from_pages(autotrader_brand_id, autowereld_brand_id, brand_name, marktplaats_brand_id,
-                               speurders_brand_id)
+                               speurders_brand_id, min_price, max_price)
 
     return cars
 
@@ -88,10 +87,13 @@ def search(request):
     c = {}
     c.update(csrf(request))
     if request.POST:
-        cars = get_cars(request)
+	brand_name = request.POST['term']
+	min_price = request.POST.get('min-price', '0')
+	max_price = request.POST.get('max-price', '1000000')
+        cars = get_cars(brand_name, min_price, max_price)
 
         return render_to_response('search.html', context=c, context_instance=RequestContext(request),
-                                  dictionary={'result': cars})
+                                  dictionary={'result': cars, 'brand_name': brand_name})
         # dictionary={'result': google(request.POST['term'], 10)})
     # return HttpResponseRedirect("/")
     else:

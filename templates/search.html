@@ -11,7 +11,7 @@
         <form action="/" method="post" class="search">{% csrf_token %}
 	    <div class="search">
 		<div class="first-search-row">
-                    <input type="text" name="term" size="30" spellcheck="true" class="search" value="{{ brand_name }}">
+                    <input type="text" name="term" size="30" spellcheck="true" class="search" value="{{ brand_name }} {{ model_name }}">
 		</div>
 		<div class="first-search-row">
                     <input type="submit" value="Zoek" class="search-button">
@@ -25,9 +25,25 @@
 	<input type="hidden" name="term" value="{{ brand_name }}" />
 	<section id ="price-range">
 	    <label for="min-price">Minimum prijs</label>
-    	    <input name="min-price" type="range" min="0" max="1000000" step="500" />
+    	    <input id="min-price-slider" name="min-price" type="range" min="0" max="1000000" step="500" value="{{ min_price }}" onchange="printValue('min-price-slider','min-price')" />
+            <input id="min-price" type="text" name="min-price" size="30" value="{{ min_price }}">
             <label for="max-price">Maximum prijs</label>
-    	    <input name="max-price" type="range" min="0" max="1000000" step="500" />
+    	    <input id="max-price-slider" name="max-price" type="range" min="0" max="1000000" step="500" value="{{ max_price }}" onchange="printValue('max-price-slider','max-price')" />
+            <input id="max-price" type="text" name="max-price" size="30" value="{{ max_price }}">
+	</section>
+	<section id ="date-range">
+	    <label for="min-year">Minimum bouwjaar</label>
+            <input id="min-year" type="text" name="min-year" size="30" value="{{ min_year }}">
+            <label for="max-year">Maximum bouwjaar</label>
+            <input id="max-year" type="text" name="max-year" size="30" value="{{ max_year }}">
+	</section>
+	<section id ="milage">
+	    <label for="min-milage">Minimum kilometerstand</label>
+    	    <input id="min-milage-slider" name="min-milage" type="range" min="0" max="1000000" step="500" value="{{ min_milage }}" onchange="printValue('min-milage-slider','min-milage')" />
+            <input id="min-milage" type="text" name="min-milage" size="30" value="{{ min_milage }}">
+            <label for="max-milage">Maximum kilometerstand</label>
+    	    <input id="max-milage-slider" name="max-milage" type="range" min="0" max="1000000" step="500" value="{{ max_milage }}" onchange="printValue('max-milage-slider','max-milage')" />
+            <input id="max-milage" type="text" name="max-milage" size="30" value="{{ max_milage }}">
 	</section>
 	<section id ="filter-button">
 	    <input type="submit" value="Zoek" class="filter-button">
@@ -45,12 +61,18 @@
         	  "priceSpecification" : {
             	  	"@type" : "UnitPriceSpecification",
             	  	"priceCurrency" : "EUR",
-            	  	"price" : "{{ res.price }}" },
+            	  	"price" : "{{ res.price }}"
+                  },
         	  "itemOffered" : {
             		"@type" : "Car",
+            		"brand" : {
+                                      "@type" : "Brand",
+                                      "name" : "{{ res.brand }}"
+                                  },
+            		"model" : "{{ res.model }}",
             		"name" : "{{ res.title }}",
             		"description" : "{{ res.description }}",
-        		"image" : "{{ res.image_url }}",
+        		"image" : "{{ res.image_url }}"
     		  }
 	        }
 		</script>
@@ -58,6 +80,10 @@
                     <article class="car" itemprop="itemOffered" itemscope itemtype="http://schema.org/Car">
                         <div class="car-image"><img itemprop="image" src="{{ res.image_url }}" alt="{{ res.title }}" class="car-image"></div>
                         <div class="car-details">
+                            <div>
+			        <span itemprop="brand" itemscope itemtype="http://schema.org/Brand"><span itemprop="name">{{ res.brand }}</span></span>
+			        <span itemprop="model">{{ res.model }}</span>
+                            </div>
                             <h3 class="title" itemprop="name">{{ res.title }}</h3>
                             <div itemprop="description">{{ res.description }}</div>
                             <span itemscope><div class="price" itemprop="priceSpecification" itemscope id="{{ res.id }}"
@@ -70,5 +96,14 @@
         {% endif %}
     </main>
     </div>
+<script>
+    function printValue(sliderID, textbox) {
+        var x = document.getElementById(textbox);
+        var y = document.getElementById(sliderID);
+        x.value = y.value;
+    }
+
+    window.onload = function() { printValue('min-price-slider', 'min-price'); printValue('max-price-slider', 'max-price'); printValue('min-milage-slider', 'min-milage'); printValue('max-milage-slider', 'max-price'); }
+</script>
 </body>
 </html>

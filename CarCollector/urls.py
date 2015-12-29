@@ -21,5 +21,9 @@ from django.contrib import admin
 # ]
 
 urlpatterns = patterns('',
+(r'^admin_tools/', include('admin_tools.urls')),
+(r'^admin/', include(admin.site.urls)),
 (r'^/?$', 'CarCollector.views.search'),
+(r'^merk/(?P<brand>\w+)/?$', 'CarCollector.views.search'),
+(r'^merk/(?P<brand>\w+)/model/(?P<model>\w+)/?$', 'CarCollector.views.search'),
 )

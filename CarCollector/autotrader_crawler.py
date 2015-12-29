@@ -4,12 +4,29 @@ import re
 import requests
 from bs4 import BeautifulSoup
 from CarCollector.models import Car
+from CarCollector.models import Site
+from CarCollector.models import Brand
+from CarCollector.models import SiteBrand
+from CarCollector.models import Model
+
 
 __author__ = 'rian'
 
 
-def get_car_page(brand_id, min_price, max_price):
-    return 'http://www.autotrader.nl/auto/' + brand_id + '/' + '?zoekopdracht=prijs-van-' + min_price + '-tot-' + max_price
+def get_car_page(brand_id, model_name, min_price, max_price, min_year, max_year, min_milage, max_milage):
+    url = 'http://www.autotrader.nl/auto/'
+    if brand_id:
+        url += brand_id.lower()
+	if model_name:
+            url += '-' + model_name.lower()
+    if min_price and max_price:
+        url += '/?zoekopdracht=prijs-van-' + min_price + '-tot-' + max_price
+    if min_year and max_year:
+        url += '%2Fbouwjaar-van-' + min_year + '-tot-' + max_year
+    if min_milage and max_milage:
+        url += '%2Fkilometerstand-van-' + min_milage + '-tot-' + max_milage
+    print(url)
+    return url
 
 
 def get_car_tags(brand_page):
@@ -20,13 +37,16 @@ def get_car_tags(brand_page):
     return listing_tags
 
 
-def parse_car_listing(listing_tag, brand_name):
+def parse_car_listing(listing_tag, brand, model_name):
     car = Car()
     link = listing_tag.find('h2').find('a')
     if link is not None:
         car.title = link['title']
 
-    car.brand = brand_name
+    car.brand = brand
+    model = Model()
+    model.name = model_name
+    car.model = model
     price_string = ''
     price_div = listing_tag.find('div', class_='result-price-label')
 
@@ -55,13 +75,15 @@ def parse_car_listing(listing_tag, brand_name):
     return car
 
 
-def collect_cars(brand_id, brand_name, min_price, max_price):
+def collect_cars(brand_id, brand, model_name, min_price, max_price, min_year, max_year, min_milage, max_milage):
     print('start autotrader')
-    brand_page = get_car_page(brand_id, min_price, max_price)
+    if model_name is None:
+         model_name = ''
+    brand_page = get_car_page(brand.name, model_name, min_price, max_price, min_year, max_year, min_milage, max_milage)
     car_tags = get_car_tags(brand_page)
     result = []
     for listing_tag in car_tags:
-        car = parse_car_listing(listing_tag, brand_name)
+        car = parse_car_listing(listing_tag, brand, model_name)
         result.append(car)
     print('end autotrader')
     return result
@@ -75,8 +97,8 @@ def crawl_car_brand_tags():
     return brand_tags
 
 
-def get_car_brands_and_ids(car_brand_tags):
-    results = {}
+def get_car_brands_and_ids(car_brand_tags, site):
+    results = []
     for car_brand_tag in car_brand_tags:
         search = re.search('^(.+) \(\d*\)', car_brand_tag.text.encode('utf-8'))
         if search is None:
@@ -84,5 +106,11 @@ def get_car_brands_and_ids(car_brand_tags):
         car_brand_string = search.group(1)
         car_brand_name = ' '.join(car_brand_string.split())
         car_brand_id = car_brand_tag['value']
-        results[car_brand_name] = car_brand_id
+	brand, created = Brand.objects.get_or_create(name=car_brand_name)
+        site_brand = SiteBrand()
+	site_brand.site = site
+	site_brand.brand = brand
+	site_brand.identifier = car_brand_id
+	site_brand.save()
+        results.append(site_brand)
     return results

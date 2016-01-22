@@ -7,6 +7,7 @@ from CarCollector.models import Car
 from CarCollector.models import Site
 from CarCollector.models import Brand
 from CarCollector.models import SiteBrand
+from CarCollector.models import SiteModel
 from CarCollector.models import Model
 
 
@@ -113,4 +114,36 @@ def get_car_brands_and_ids(car_brand_tags, site):
 	site_brand.identifier = car_brand_id
 	site_brand.save()
         results.append(site_brand)
+    return results
+
+def crawl_car_model_tags(site):
+    models = []
+    site_brands = SiteBrand.objects.filter(site__pk=site.id)
+    for site_brand in site_brands:
+	print(site_brand.identifier)
+        data = { 'merk': site_brand.identifier }
+        response = requests.post('http://www.autotrader.nl/auto/searchbox/searchpanesimplex', data=data)
+        print(response.status_code)
+        print(response.text)
+        soup = BeautifulSoup(response.content, 'html5lib')
+	models.extend(get_car_models_and_ids(soup.find('select', {'id': 'model'}).findAll('option'), site, site_brand.brand))
+    return models
+
+
+def get_car_models_and_ids(car_model_tags, site, brand):
+    results = []
+    for car_model_tag in car_model_tags:
+        search = re.search('^(.+) \(\d*\)', car_model_tag.text.encode('utf-8'))
+        if search is None:
+            continue
+        car_model_string = search.group(1)
+        car_model_name = ' '.join(car_model_string.split())
+        car_model_id = car_model_tag['value']
+	model, created = Model.objects.get_or_create(name=car_model_name, brand=brand)
+        site_model = SiteModel()
+	site_model.site = site
+	site_model.model = model
+	site_model.identifier = car_model_id
+	site_model.save()
+        results.append(site_model)
     return results

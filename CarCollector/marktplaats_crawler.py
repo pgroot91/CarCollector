@@ -7,6 +7,7 @@ from CarCollector.models import Car
 from CarCollector.models import Site
 from CarCollector.models import Brand
 from CarCollector.models import SiteBrand
+from CarCollector.models import SiteModel
 from CarCollector.models import Model
 
 __author__ = 'rian'
@@ -104,4 +105,35 @@ def get_car_brands_and_ids(car_brand_tags, site):
 	site_brand.identifier = car_brand_id
 	site_brand.save()
         results.append(site_brand)
+    return results
+
+def crawl_car_model_tags(site):
+    models = []
+    site_brands = SiteBrand.objects.filter(site__pk=site.id)
+    for site_brand in site_brands:
+        print (site_brand.brand.name)
+        response = requests.get('http://www.marktplaats.nl/h/auto-s/' + site_brand.brand.name.lower().replace(' ', '-').replace('\'', '-') + '.html')
+        print(response.status_code)
+        soup = BeautifulSoup(response.content, 'html5lib')
+	tags = soup.find('div', {'id': 'cars-search-models'})
+	if (tags is not None):
+            tags = tags.find('ul', class_='item-frame')
+            tags = tags.findAll('li')
+	    models.extend(get_car_models_and_ids(tags, site, site_brand.brand))
+    return models
+
+
+def get_car_models_and_ids(car_model_tags, site, brand):
+    results = []
+    for car_model_tag in car_model_tags:
+        car_model_name = ' '.join(car_model_tag.string.split())
+	print(car_model_name)
+        car_model_id = car_model_tag['data-val']
+	model, created = Model.objects.get_or_create(name=car_model_name, brand=brand)
+        site_model = SiteModel()
+	site_model.site = site
+	site_model.model = model
+	site_model.identifier = car_model_id
+	site_model.save()
+        results.append(site_model)
     return results

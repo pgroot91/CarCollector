@@ -31,9 +31,20 @@ class SiteBrand(models.Model):
 class Model(models.Model):
     name = models.CharField(max_length=200)
     brand = models.ForeignKey(Brand)
+    url = models.URLField()
+    site_models = models.ManyToManyField(Site, through='SiteModel')
 
     def __unicode__(self):
         return self.name
+
+class SiteModel(models.Model):
+    site = models.ForeignKey(Site)
+    model = models.ForeignKey(Model)
+    identifier = models.CharField(max_length=200)
+    url = models.URLField()
+    
+    def __unicode__(self):
+        return self.identifier
 
 class Car(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
